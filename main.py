@@ -75,12 +75,43 @@ in_chirie.click()
 ap.driver_ap.find_element(By.CSS_SELECTOR, '#b_cautator_form > div > div.box-buton-cauta > input').click()
 
 ap.set_filters(300, 3)
+time.sleep(4)
 link = ap.driver_ap.find_element(By.XPATH, '//*[contains(@id,"anunt")]/div').text
 print(link)
 ap_list_names = ap.driver_ap.find_elements(By.XPATH, '//*[contains(@id,"anunt")]/div/div[1]/div[2]/div[1]/div[1]/div[2]/h2/span')
+ap_list_links = []
+ap_list_price = []
+ap_list_anunturi = []
+main_search_url = ap.driver_ap.current_url
 try:
     for aps in ap_list_names:
         print(aps.text)
+
 except selenium.common.exceptions.StaleElementReferenceException:
     ap.driver_ap.find_element(By.XPATH, '//*[@id="buton-exit-modal-imoagent"]').click()
     ap.driver_ap.find_element(By.XPATH, '// *[ @ id = "auth-go-back"]').click()
+
+try:
+    ap_list_anunturi = ap.driver_ap.find_elements(By.XPATH, '//*[contains(@id,"anunt")]/div/div[1]/div[2]/div[1]/div[1]')
+    for apart in ap_list_anunturi:
+        apart.click()
+        ap_list_links.append(ap.driver_ap.current_url)
+        try:
+            ap_list_price.append(ap.driver_ap.find_element(By.XPATH,
+                                                           '//*[@id="content-detalii"]/div[1]/div[1]/div[3]/div/div/div/text()'))
+            print(ap_list_price)
+        except selenium.common.exceptions.NoSuchElementException:
+            ap_list_price.append("Pret necomunicat")
+            print(ap_list_price)
+        time.sleep(3)
+        ap.driver_ap.get(main_search_url)
+        time.sleep(3)
+
+except selenium.common.exceptions.StaleElementReferenceException:
+    ap.driver_ap.find_element(By.XPATH, '//*[@id="buton-exit-modal-imoagent"]').click()
+    ap.driver_ap.find_element(By.XPATH, '// *[ @ id = "auth-go-back"]').click()
+
+except selenium.common.exceptions.ElementClickInterceptedException:
+    ap.driver_ap.find_element(By.XPATH, '//*[@id="buton-exit-modal-imoagent"]').click()
+    ap.driver_ap.find_element(By.XPATH, '// *[ @ id = "auth-go-back"]').click()
+
